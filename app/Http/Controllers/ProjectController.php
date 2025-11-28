@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\storeProjectRequest;
+use App\Http\Requests\updateProjectRequest;
+use App\Http\Resources\ProjectResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
 {
@@ -13,23 +17,22 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $projects = Project::with('owner')->where('owner_id', Auth::id())->get();
+        return response()->json(['Projects' => ProjectResource::collection($projects)], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(storeProjectRequest $request)
     {
-        //
+        //! Create Project
+        $project = Project::create([
+            'name' => $request->validated()['name'],
+            'owner_id' => Auth::id(),
+        ]);
+        return response()->json($project, 201);
     }
 
     /**
@@ -37,23 +40,18 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Project $project)
-    {
-        //
+        Gate::authorize('view', $project);
+        return response()->json(new ProjectResource($project), 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Project $project)
+    public function update(updateProjectRequest $request, Project $project)
     {
-        //
+        Gate::authorize('update', $project);
+        $project->update($request->validated());
+        return response()->json(new ProjectResource($project), 200);
     }
 
     /**
@@ -61,6 +59,8 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        Gate::authorize('delete', $project);
+        $project->delete();
+        return response()->json(['message' => 'project deleted'], 204);
     }
 }

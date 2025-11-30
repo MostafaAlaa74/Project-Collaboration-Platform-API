@@ -17,7 +17,10 @@ class TaskPolicy
         //! The user can view any task if they own at least one project
         return $user->projects()->exists();
     }
-
+    public function viewProjectTask(User $user , $projectId): bool {
+        $project = Project::findOrFail($projectId);
+        return $user->id === $project->owner_id;
+    }
     /**
      * Determine whether the user can view the model.
      */

@@ -23,9 +23,14 @@ class TaskController extends Controller
      */
     public function index()
     {
-        Gate::authorize('viewAny', Task::class);
         $tasks = Task::with('project')->get();
         return response()->json($tasks);
+    }
+
+    public function getProjectTasks($projectId)
+    {
+        Gate::authorize('viewProjectTask', [Task::class, $projectId]);
+        return response()->json(Task::where('project_id', $projectId)->get(), 200);
     }
 
     /**
@@ -35,7 +40,7 @@ class TaskController extends Controller
     {
         Gate::authorize('create', [Task::class, $request->project_id]);
         $task = Task::create($request->validated());
-        event(new TaskCreatedEvent( Auth::user() , $task));
+        event(new TaskCreatedEvent(Auth::user(), $task));
         // // Ensure relations are loaded
         // $task->load('project');
         // $project = $task->project;
@@ -71,7 +76,7 @@ class TaskController extends Controller
     {
         Gate::authorize('update', $task);
         $task->update($request->validated());
-        event(new TaskUpdatedEvent(Auth::user() , $task));
+        event(new TaskUpdatedEvent(Auth::user(), $task));
         return response()->json($task, 200);
     }
 

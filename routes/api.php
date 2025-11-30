@@ -19,11 +19,14 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/logout', [logoutController::class, 'logout'])->middleware('auth:sanctum');
 });
 
-Route::apiResource('projects', ProjectController::class)->middleware('auth:sanctum');
-Route::post('/invite/{userId}/project/{projectId}', [InvitationController::class, 'invite'])->middleware('auth:sanctum');
-Route::post('/invite/{projectId}/accept', [InvitationController::class, 'accept'])->middleware('auth:sanctum')->name('invitations.accept');
-Route::post('/projects/{projectId}/members/{userId}/role', [ProjectController::class, 'changeMemberRole'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('projects', ProjectController::class);
+    Route::post('/invite/{userId}/project/{projectId}', [InvitationController::class, 'invite']);
+    Route::post('/invite/{projectId}/accept', [InvitationController::class, 'accept'])->name('invitations.accept');
+    Route::post('/projects/{projectId}/members/{userId}/role', [ProjectController::class, 'changeMemberRole']);
 
-Route::apiResource('tasks', TaskController::class)->middleware('auth:sanctum');
-Route::get('/projects/{projectId}/tasks/priority/{priority}', [TaskController::class, 'getPriorityTasks'])->middleware('auth:sanctum');
-Route::get('/projects/{projectId}/tasks/status/{status}', [TaskController::class, 'getStatusTasks'])->middleware('auth:sanctum');
+    Route::apiResource('tasks', TaskController::class);
+    Route::get('project/{projectId}/tasks', [TaskController::class, 'getProjectTasks']);
+    Route::get('/projects/{projectId}/tasks/priority/{priority}', [TaskController::class, 'getPriorityTasks']);
+    Route::get('/projects/{projectId}/tasks/status/{status}', [TaskController::class, 'getStatusTasks']);
+});

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TaskCreatedEvent;
+use App\Events\TaskUpdatedEvent;
 use App\Models\Task;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\storeTaskRequest;
@@ -9,6 +11,10 @@ use App\Http\Requests\updateTaskRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\taskCreatedMail;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\Mailer\DelayedEnvelope;
 
 class TaskController extends Controller
 {
@@ -29,6 +35,23 @@ class TaskController extends Controller
     {
         Gate::authorize('create', [Task::class, $request->project_id]);
         $task = Task::create($request->validated());
+        event(new TaskCreatedEvent( Auth::user() , $task));
+        // // Ensure relations are loaded
+        // $task->load('project');
+        // $project = $task->project;
+
+        // // Collect recipient emails: project members + owner
+        // $memberEmails = $project->members()->pluck('email')->toArray();
+        // $ownerEmail = optional($project->owner)->email;
+
+        // $recipients = array_filter(array_unique(array_merge($memberEmails, [$ownerEmail])));
+
+        // // Send the task created mail to each recipient (personalized delivery)
+        // foreach ($recipients as $email) {
+        //     if (empty($email)) continue;
+        //     Mail::to($email)->queue(new taskCreatedMail($task));
+        //     // Delaying between sends can be added here if necessary
+        // }
         return response()->json($task, 201);
     }
 
@@ -48,6 +71,7 @@ class TaskController extends Controller
     {
         Gate::authorize('update', $task);
         $task->update($request->validated());
+        event(new TaskUpdatedEvent(Auth::user() , $task));
         return response()->json($task, 200);
     }
 

@@ -20,8 +20,8 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::apiResource('projects', ProjectController::class)->middleware('auth:sanctum');
-Route::post('/invite/{userId}', [InvitationController::class, 'invite'])->middleware('auth:sanctum');
-Route::post('/invite/{userId}/accept', [InvitationController::class, 'accept'])->middleware('auth:sanctum')->name('invitations.accept');
+Route::post('/invite/{userId}/project/{projectId}', [InvitationController::class, 'invite'])->middleware('auth:sanctum');
+Route::post('/invite/{projectId}/accept', [InvitationController::class, 'accept'])->middleware('auth:sanctum')->name('invitations.accept');
 
 
 Route::apiResource('tasks', TaskController::class)->middleware('auth:sanctum');

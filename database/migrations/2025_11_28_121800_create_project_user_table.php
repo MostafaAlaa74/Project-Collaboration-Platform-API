@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->string('token')->unique();
+            $table->enum('status' , ['pending' , 'accepted' , 'declined'])->default('pending');
             $table->enum('role' , ['member' , 'admin']);
             $table->timestamps();
         });

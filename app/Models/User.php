@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable , HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -52,8 +52,10 @@ class User extends Authenticatable
         return $this->hasMany(Project::class, 'owner_id');
     }
 
-    public function projects()
+    public function memberProjects()
     {
-        return $this->hasMany(Project::class)->withPivot('role')->withTimestamps();
+        return $this->belongsToMany(Project::class, 'project_user')
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }

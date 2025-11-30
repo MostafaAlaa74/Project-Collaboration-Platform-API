@@ -40,19 +40,19 @@
                     <p style="color: #2c3e50; font-size: 14px; margin: 0 0 12px 0; font-weight: 600;">Project Details:
                     </p>
                     <p style="color: #555555; font-size: 14px; margin: 8px 0; line-height: 1.6;">
-                        <strong>Project Name:</strong> Your Project Name
+                        <strong>Project Name:</strong> {{ $project->name }}
                     </p>
                     <p style="color: #555555; font-size: 14px; margin: 8px 0; line-height: 1.6;">
-                        <strong>Invited by:</strong> Team Lead
+                        <strong>Invited by:</strong> {{ $user->name }} ({{ $user->email }})
                     </p>
                     <p style="color: #555555; font-size: 14px; margin: 8px 0; line-height: 1.6;">
-                        <strong>Your Role:</strong> Collaborator
+                        <strong>Your Role:</strong> Member
                     </p>
                 </div>
 
                 <!-- CTA Button -->
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="{{ route('invitations.accept', $user->id) }}"
+                    <a href="{{ $acceptUrl }}"
                         style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 6px; font-size: 16px; font-weight: 600; transition: transform 0.2s ease;">
                         Accept Invitation
                     </a>

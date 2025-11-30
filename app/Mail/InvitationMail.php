@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,12 +19,13 @@ class InvitationMail extends Mailable
      * Create a new message instance.
      */
 
-    public $user;
 
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
+
+    public function __construct(
+        public Project $project,
+        public User $user,
+        public string $acceptUrl
+    ) {}
 
     /**
      * Get the message envelope.
@@ -45,6 +47,8 @@ class InvitationMail extends Mailable
             view: 'mail.invitation',
             with: [
                 'user' => $this->user,
+                'project' => $this->project,
+                'acceptUrl' => $this->acceptUrl,
             ],
         );
     }

@@ -26,4 +26,16 @@ class Project extends Model
     {
         return $this->hasMany(Task::class);
     }
+
+    public function changeMemberRole($userId, $newRole)
+    {
+        $member = $this->members()->where('user_id', $userId)->first();
+
+        if ($member) {
+            $this->members()->updateExistingPivot($userId, ['role' => $newRole]);
+            return true;
+        }
+
+        return false;
+    }
 }

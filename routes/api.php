@@ -22,7 +22,7 @@ Route::group(['prefix' => 'auth'], function () {
 Route::apiResource('projects', ProjectController::class)->middleware('auth:sanctum');
 Route::post('/invite/{userId}/project/{projectId}', [InvitationController::class, 'invite'])->middleware('auth:sanctum');
 Route::post('/invite/{projectId}/accept', [InvitationController::class, 'accept'])->middleware('auth:sanctum')->name('invitations.accept');
-
+Route::post('/projects/{projectId}/members/{userId}/role', [ProjectController::class, 'changeMemberRole'])->middleware('auth:sanctum');
 
 Route::apiResource('tasks', TaskController::class)->middleware('auth:sanctum');
 Route::get('/projects/{projectId}/tasks/priority/{priority}', [TaskController::class, 'getPriorityTasks'])->middleware('auth:sanctum');

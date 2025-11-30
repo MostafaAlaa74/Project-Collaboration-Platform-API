@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\storeProjectRequest;
 use App\Http\Requests\updateProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProjectController extends Controller
 {
@@ -62,5 +64,25 @@ class ProjectController extends Controller
         Gate::authorize('delete', $project);
         $project->delete();
         return response()->json(['message' => 'project deleted'], 204);
+    }
+
+    public function changeMemberRole($projectId, $userId, Request $request)
+    {
+        $project = Project::findOrFail($projectId);
+        // Gate::authorize('update', $project);
+        
+        $newRole = $request->input('role');
+        
+        if (!in_array($newRole, ['member', 'admin'])) {
+            return response()->json(['message' => 'Invalid role specified'], 400);
+        }
+
+        $result = $project->changeMemberRole($userId, $newRole);
+
+        if ($result) {
+            return response()->json(['message' => 'Member role updated successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Member not found in the project'], 404);
+        }
     }
 }

@@ -32,7 +32,7 @@ class TaskPolicy
     public function create(User $user, $projectId): bool
     {
         $project = Project::find($projectId);
-        return $project && $user->id === $project->owner_id;
+        return $project && $user->id === $project->owner_id || $project->members()->where('user_id', $user->id)->where('role', 'admin')->exists();
     }
 
     /**
@@ -40,7 +40,7 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $user->id === $task->project->owner_id;
+        return $user->id === $task->project->owner_id || $task->project->members()->where('user_id', $user->id)->where('role', 'admin')->exists();
     }
 
     /**
@@ -48,7 +48,7 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        return $user->id === $task->project->owner_id;
+        return $user->id === $task->project->owner_id || $task->project->members()->where('user_id', $user->id)->where('role', 'admin')->exists();
     }
 
     /**

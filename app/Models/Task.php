@@ -15,7 +15,7 @@ class Task extends Model
         return $this->belongsTo(Project::class);
     }
 
-    //* Get Tasks Accourding to its Periority
+    //! Get Tasks Accourding to its Periority
     public static function getPeriorityTasks($projectId, $priority)
     {
         if ($priority !== 'low' && $priority !== 'high') {
@@ -24,7 +24,7 @@ class Task extends Model
         return self::where('project_id', $projectId)->where('priority', $priority)->get();
     }
 
-    //* Get Tasks Accourding to its Status
+    //! Get Tasks Accourding to its Status
     public static function getStatusTasks($projectId, $status)
     {
         if ($status !== 'pending' && $status !== 'in_progress' && $status !== 'completed') {
